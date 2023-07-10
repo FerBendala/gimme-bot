@@ -1,43 +1,50 @@
 const { By, Key, until } = require( 'selenium-webdriver' )
 const { JSDOM } = require( 'jsdom' )
 const { configureDriver } = require( '../drivers/selenium' )
+const { getProducts } = require( './get-products' )
 
 const scrapeSupermarket = async ( url, postalCode ) => {
-    // Configurar el driver de Selenium
+    // Configure Selenium, specify URL, and enter postal code
     const driver = await configureDriver()
-
-    // Abrir la URL especificada en el navegador
     await driver.get( url )
 
-    // Esperar a que el elemento de código postal esté disponible en el DOM
-    const inputPostalCode = await driver.wait(
-        until.elementLocated( By.css( '.ym-hide-content' ) ),
-        10000
-    )
-
-    // Introducir el código postal en el campo y presionar Enter
+    const inputPostalCode = await driver.wait( until.elementLocated( By.css( '.ym-hide-content' ) ), 10000 )
     await inputPostalCode.sendKeys( postalCode, Key.RETURN )
 
-    // Esperar a que aparezca el elemento con la clase 'product-cell' en el DOM
+    // Click on cookies if present
+    try {
+        await driver.wait( until.elementLocated( By.css( '.cookie-banner' ) ), 10000 )
+        const acceptCookies = await driver.wait( until.elementLocated( By.xpath( "//button[contains(text(), 'Aceptar todas')]" ) ), 10000 )
+        await acceptCookies.click()
+    } catch ( error ) {
+        console.log( "Accept cookies button not found" )
+        try {
+            await driver.sleep( 1000 )
+            const acceptCookies = await driver.wait( until.elementLocated( By.xpath( "//button[contains(text(), 'Aceptar todas')]" ) ), 10000 )
+            await acceptCookies.click()
+        } catch ( error ) {
+            console.log( "Accept cookies button not found (second attempt)" )
+        }
+    }
+
+
+    // // Click on categories link if present
+    // try {
+    //     await driver.wait( until.elementLocated( By.css( 'a[href="/categories"]' ) ), 10000 )
+
+    //     const linkCategories = await driver.wait( until.elementLocated( By.css( 'a[href="/categories"]' ) ), 10000 )
+
+    //     await linkCategories.click()
+    // } catch ( error ) {
+    //     console.log( "Categories not found", error )
+    // }
+
+    // Get the HTML and create a JSDOM object to manipulate and parse the HTML
     await driver.wait( until.elementLocated( By.className( 'product-cell' ) ), 10000 )
 
-    // Hacer clic en el enlace de categorías
-    const linkCategorias = await driver.wait(
-        until.elementLocated( By.css( 'a.menu-item.subhead1-sb' ) ),
-        10000
-    )
-    await linkCategorias.click()
-
-    // Esperar a que aparezca el elemento con la clase 'product-cell' en el DOM
-    await driver.wait( until.elementLocated( By.className( 'product-cell' ) ), 10000 )
-
-    // Obtener el HTML de la página cargada en el navegador
     const html = await driver.getPageSource()
-
-    // Crear un objeto JSDOM para manipular y analizar el HTML
     const dom = new JSDOM( html )
 
-    // Devolver el documento del objeto JSDOM que representa la página
     return dom.window.document
 }
 

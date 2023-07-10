@@ -1,5 +1,5 @@
-const getProducts = ( document ) => {
-    const productos = []
+const getProducts = document => {
+    const products = []
     const productCells = document.getElementsByClassName( 'product-cell' )
 
     for ( const productCell of productCells ) {
@@ -11,9 +11,9 @@ const getProducts = ( document ) => {
         } else {
             price = 'No disponible'
         }
-        productos.push( { name, price } )
+        products.push( { name, price } )
     }
-    return productos
+    return products
 }
 
 module.exports = { getProducts }
