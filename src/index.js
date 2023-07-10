@@ -9,7 +9,7 @@ const main = async () => {
     const document = await scrapeSupermarket( url, postalCode )
     const products = getProducts( document )
 
-    await writeJson( products, `./list/products-${getFormattedDate()}.json` )
+    await writeJson( products, `./data/products-${getFormattedDate()}.json` )
 }
 
 main().catch( console.error )
