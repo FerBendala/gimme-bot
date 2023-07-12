@@ -13,11 +13,10 @@ const global = {
 }
 
 const getProducts = document => {
-    const title = document.querySelector( global.title ).textContent
     const sections = Array.from( document.querySelectorAll( global.section ) )
 
     const products = sections.reduce( ( result, section ) => {
-        const sectionTitle = section.querySelector( global.subtitle ).textContent
+        const sectionTitle = section.querySelector( global.subtitle )?.textContent || ''
         const productCards = Array.from( section.querySelectorAll( global.card.card ) )
 
         const sectionProducts = productCards.map( card => {
@@ -27,14 +26,13 @@ const getProducts = document => {
             const price = card.querySelector( global.card.price )?.textContent || ''
             const image = card.querySelector( global.card.image )?.src || ''
 
-            console.log( image.startsWith( "https://" ) )
+            console.log( `\x1b[96m -- ${name} \x1b[0m` )
 
             return { name, description, image, previuousPrice, price }
         } )
 
         return { ...result, [sectionTitle]: sectionProducts }
     }, {} )
-
 
     return products
 }

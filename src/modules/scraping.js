@@ -21,12 +21,14 @@ const getButton = ( text ) => {
     return By.xpath( `//button[contains(., "${text}")]` )
 }
 
-const getSectionProducts = async ( driver ) => {
-    const productCellSelector = '.product-cell img'
+const getButtonSubCategory = ( text ) => {
+    return By.xpath( `//button[contains(text(), "${text}")]` )
+}
 
+const getSectionProducts = async ( driver ) => {
     // Define la función de espera personalizada
     const waitForProductCellImgSrc = async () => {
-        const elements = await driver.findElements( By.css( productCellSelector ) )
+        const elements = await driver.findElements( By.css( '.product-cell img' ) )
         for ( const element of elements ) {
             await driver.sleep( 500 )
             const src = await element.getAttribute( 'src' )
@@ -47,10 +49,29 @@ const getSectionProducts = async ( driver ) => {
     return categoryProducts
 }
 
-
 const clickAndGetProducts = async ( driver, name ) => {
-    await elementClick( `${name} button`, driver, getButton( name ) )
+    await elementClick( `${name} button`, driver, getButtonSubCategory( name ) )
     return await getSectionProducts( driver )
+}
+
+const getAllCategories = async ( driver ) => {
+    const page = await driver.getPageSource()
+    const html = new JSDOM( page )
+    const document = html.window.document
+    const allCategories = Array.from( document.querySelectorAll( '.category-menu__header' ) )
+    const getAllCategories = allCategories.map( category => category.textContent )
+
+    return getAllCategories
+}
+
+const getAllSubCategories = async ( driver ) => {
+    const page = await driver.getPageSource()
+    const html = new JSDOM( page )
+    const document = html.window.document
+    const allCategories = Array.from( document.querySelectorAll( '.category-item' ) )
+    const getAllCategories = allCategories.map( category => category.textContent )
+
+    return getAllCategories
 }
 
 const scrapeSupermarket = async ( url, postalCode ) => {
@@ -65,41 +86,25 @@ const scrapeSupermarket = async ( url, postalCode ) => {
     await elementClick( 'Cookies button', driver, getButton( 'Aceptar todas' ) )
     await elementClick( 'Categories button', driver, By.css( 'a[href="/categories"]' ) )
 
+    await driver.sleep( 1000 )
+    const allCategories = await getAllCategories( driver )
 
-    // Aceite, especias y salsas
-    const aceiteProducts = await getSectionProducts( driver, 'Aceite, vinagre y sal' )
-    const especiasProducts = await clickAndGetProducts( driver, 'Especias' )
-    const salsasProducts = await clickAndGetProducts( driver, 'Mayonesa, ketchup y mostaza' )
-    const otrasSalsasProducts = await clickAndGetProducts( driver, 'Otras salsas' )
+    const products = {}
 
-    // Agua y refrescos
-    await elementClick( 'Agua y refrescos', driver, getButton( 'Agua y refrescos' ) )
-    const aguaProducts = await clickAndGetProducts( driver, 'Agua' )
-    const isotonicoProducts = await clickAndGetProducts( driver, 'Isotónico y energético' )
-    const colaProducts = await clickAndGetProducts( driver, 'Refresco de cola' )
-    const sodaProducts = await clickAndGetProducts( driver, 'Refresco de naranja y de limón' )
-    const tonicaProducts = await clickAndGetProducts( driver, 'Tónica y bitter' )
-    const refrescoProducts = await clickAndGetProducts( driver, 'Refresco de té y sin gas' )
+    for ( let category of allCategories ) {
+        console.log( `\x1b[32m ${category}  \x1b[0m` )
+        await elementClick( category, driver, getButton( category ) )
+        const allSubCategories = await getAllSubCategories( driver )
 
-    await driver.quit()
+        products[category] = {}
 
-    const products = {
-        'Aceite, especias y salsas': {
-            'Aceite, vinagre y sal': aceiteProducts,
-            'Especias': especiasProducts,
-            'Salsas': salsasProducts,
-            'Otras salsas': otrasSalsasProducts,
-        },
-        'Agua y refrescos': {
-            'Agua': aguaProducts,
-            'Isotónico y energético': isotonicoProducts,
-            'Refresco de cola': colaProducts,
-            'Refresco de naranja y de limón': sodaProducts,
-            'Tónica y bitter': tonicaProducts,
-            'Refresco de té y sin gas': refrescoProducts,
+        for ( let subCategory of allSubCategories ) {
+            console.log( `\x1b[92m - ${subCategory}  \x1b[0m` )
+
+            const subCategoryProducts = await clickAndGetProducts( driver, subCategory )
+            products[category][subCategory] = subCategoryProducts
         }
     }
-
 
     return products
 }
