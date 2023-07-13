@@ -18,7 +18,7 @@ const scrapeSupermarket = async ( url, postalCode ) => {
     await elementClick( 'Cookies button', driver, getButton( 'Aceptar todas' ) )
     await elementClick( 'Categories button', driver, By.css( 'a[href="/categories"]' ) )
 
-    // Set
+    // Set empty products
     const products = {}
 
     // Categories iteration
