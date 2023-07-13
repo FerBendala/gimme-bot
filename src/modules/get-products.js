@@ -1,40 +1,31 @@
-const global = {
-    title: 'h1',
-    subtitle: 'h2',
-    section: 'section[data-test="section"]',
-    card: {
-        card: '.product-cell',
-        name: '.product-cell__description-name',
-        description: '.product-format',
-        previousPrice: '.product-price__previous-unit-price',
-        price: '.product-price__unit-price',
-        image: 'img'
-    },
-}
+const { By } = require( 'selenium-webdriver' )
+const { getPageHtml } = require( './get-html' )
+const { getProductsJson } = require( './get-products-json' )
 
-const getProducts = document => {
-    const sections = Array.from( document.querySelectorAll( global.section ) )
+const getProducts = async ( driver ) => {
+    // Define la función de espera personalizada
+    const waitForProductCellImgSrc = async () => {
+        const elements = await driver.findElements(
+            By.css( '.product-cell img' )
+        )
 
-    const products = sections.reduce( ( result, section ) => {
-        const sectionTitle = section.querySelector( global.subtitle )?.textContent || ''
-        const productCards = Array.from( section.querySelectorAll( global.card.card ) )
+        for ( const element of elements ) {
+            await driver.sleep( 500 )
+            const src = await element.getAttribute( 'src' )
+            if ( src && src.startsWith( 'https://' ) ) {
+                return true // El atributo 'src' coincide, se cumple la condición
+            }
+        }
+        return false // Ningún elemento coincide con la condición, se continua esperando
+    }
 
-        const sectionProducts = productCards.map( card => {
-            const name = card.querySelector( global.card.name )?.textContent || ''
-            const description = card.querySelector( global.card.description )?.textContent || ''
-            const previuousPrice = card.querySelector( global.card.previousPrice )?.textContent || ''
-            const price = card.querySelector( global.card.price )?.textContent || ''
-            const image = card.querySelector( global.card.image )?.src || ''
+    // Espera hasta que se cumpla la condición o hasta que transcurran 10 segundos
+    await driver.wait( waitForProductCellImgSrc, 10000 )
 
-            console.log( `\x1b[96m -- ${name} \x1b[0m` )
-
-            return { name, description, image, previuousPrice, price }
-        } )
-
-        return { ...result, [sectionTitle]: sectionProducts }
-    }, {} )
-
-    return products
+    // Obtiene el HTML y crea un objeto JSDOM para manipular y analizar el HTML
+    const categoryPage = await getPageHtml( driver )
+    const categoryProducts = await getProductsJson( categoryPage )
+    return categoryProducts
 }
 
 module.exports = { getProducts }
