@@ -1,5 +1,5 @@
 const { By, Key, until } = require( 'selenium-webdriver' )
-const { configureDriver } = require( '../drivers/selenium' )
+const { configureDriver } = require( '../../drivers/selenium' )
 
 const { getButton } = require( './get-buttons' )
 const { getAllCategories, getAllSubCategories } = require( './get-categories' )

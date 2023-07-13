@@ -2,7 +2,7 @@ const fs = require( 'fs' )
 const path = require( 'path' )
 const { getFormattedDate } = require( './utils/date' )
 const { writeJson } = require( './utils/file' )
-const { scrapeSupermarket } = require( './modules/scraping' )
+const { scrapeSupermarket } = require( './modules/mercadona/scraping' )
 
 const main = async () => {
     const url = 'https://tienda.mercadona.es/'
