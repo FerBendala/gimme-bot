@@ -5,12 +5,14 @@ const { getButton } = require( './get-buttons' )
 const { getAllCategories, getAllSubCategories } = require( './get-categories' )
 const { elementClick, clickCategoriesAndGetProducts } = require( './get-clicks' )
 
-const scrapeSupermarket = async ( url, postalCode ) => {
+const scrapeMercadona = async () => {
     // Configure Selenium and specify URL
+    const url = 'https://tienda.mercadona.es/'
     const driver = await configureDriver()
     await driver.get( url )
 
     // 
+    const postalCode = '08029'
     const inputPostalCode = await driver.wait( until.elementLocated( By.css( '.ym-hide-content' ) ), 10000 )
     await inputPostalCode.sendKeys( postalCode, Key.RETURN )
 
@@ -51,4 +53,4 @@ const scrapeSupermarket = async ( url, postalCode ) => {
     return products
 }
 
-module.exports = { scrapeSupermarket }
+module.exports = { scrapeMercadona }
