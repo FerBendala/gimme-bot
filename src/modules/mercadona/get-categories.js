@@ -1,4 +1,4 @@
-const { getPageHtml } = require( './get-html' )
+const { getPageHtml } = require( '../get-html' )
 
 const getAllCategories = async ( driver ) => {
     const document = await getPageHtml( driver )

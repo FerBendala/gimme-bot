@@ -1,28 +1,14 @@
+// Generic
 const { By, Key, until } = require( 'selenium-webdriver' )
 const { configureDriver } = require( '../../drivers/selenium' )
-const { getPageHtml } = require( './get-html' )
-const { getAllSubCategories } = require( './get-categories' )
-const { elementClick, clickCategoriesAndGetProducts } = require( './get-clicks' )
+const { getPageHtml } = require( '../get-html' )
+const { elementClick, clickCategoriesAndGetProducts } = require( '../get-clicks' )
+const { getButton, getLink } = require( '../get-items' )
+
+// Specific
+const { getAllCategories, getAllSubCategories } = require( './get-categories' )
 const { getProductsJson } = require( './get-products-json' )
 
-
-const getButton = ( text ) => {
-    return By.xpath( `//button[contains(., "${text}")]` )
-}
-
-const getLink = ( text ) => {
-    return By.xpath( `//a[contains(text(), "${text}")]` )
-}
-
-const getAllCategories = async ( driver ) => {
-    const document = await getPageHtml( driver )
-    const allCategories = Array.from(
-        document.querySelectorAll( '.dropdown-submenu + .submenu ul li a' )
-    )
-    const getAllCategories = allCategories.map( category => category.textContent )
-
-    return getAllCategories
-}
 
 const scrapeCaprabo = async () => {
     // Configure Selenium and specify URL

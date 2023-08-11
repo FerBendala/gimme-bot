@@ -12,7 +12,6 @@ const global = {
 
 const getProductsJson = ( document ) => {
     const sections = Array.from( document.querySelectorAll( global.section ) )
-    console.log( 'hola' )
 
     const products = sections.reduce( ( result, section ) => {
         const sectionTitle = section.querySelector( global.subtitle )?.textContent || ''
@@ -27,8 +26,6 @@ const getProductsJson = ( document ) => {
 
             return { name, image, price }
         } )
-
-        console.log( sectionProducts )
 
         return { ...result, [sectionTitle]: sectionProducts }
     }, {} )

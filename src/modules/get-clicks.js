@@ -1,6 +1,6 @@
 const { until } = require( 'selenium-webdriver' )
-const { getProducts } = require( './get-products' )
-const { getButtonSubCategory } = require( './get-buttons' )
+const { getProducts } = require( './mercadona/get-products' )
+const { getButtonWithOnlyText } = require( './get-items' )
 
 const elementClick = async ( type, driver, element ) => {
     try {
@@ -17,7 +17,7 @@ const elementClick = async ( type, driver, element ) => {
 }
 
 const clickCategoriesAndGetProducts = async ( driver, name ) => {
-    await elementClick( `${name} button`, driver, getButtonSubCategory( name ) )
+    await elementClick( `${name} button`, driver, getButtonWithOnlyText( name ) )
     return await getProducts( driver )
 }
 

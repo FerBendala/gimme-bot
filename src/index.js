@@ -12,11 +12,12 @@ const main = async () => {
     const filename = `products-${getFormattedDate()}.json`
     const filePath = path.join( dataFolder, filename )
 
-    // Scraping supermarket
-    // const scraping = await scrapeMercadona()
     await scrapeCaprabo()
 
-    // Write json with info
+    // // Mercadona
+    // // Scraping supermarket
+    // const scraping = await scrapeMercadona()
+    // // Write json with info
     // await writeJson( scraping, filePath )
 }
 

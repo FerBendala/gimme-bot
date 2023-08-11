@@ -1,5 +1,5 @@
 const { By } = require( 'selenium-webdriver' )
-const { getPageHtml } = require( './get-html' )
+const { getPageHtml } = require( '../get-html' )
 const { getProductsJson } = require( './get-products-json' )
 
 const getProducts = async ( driver ) => {
