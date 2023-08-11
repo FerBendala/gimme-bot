@@ -9,7 +9,7 @@ const scrapeMercadona = async () => {
     // Configure Selenium and specify URL
     const url = 'https://tienda.mercadona.es/'
     const driver = await configureDriver()
-    await driver.get( url )
+    await navigateToUrl( driver, url )
 
     // 
     const postalCode = '08029'

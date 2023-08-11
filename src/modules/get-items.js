@@ -1,15 +1,16 @@
 const { By } = require( 'selenium-webdriver' )
 
 const getButton = ( text ) => {
-    return By.xpath( `//button[contains(., "${text}")]` )
+    return By.xpath( `//button[contains(., '${text}')]` )
 }
 
 const getButtonWithOnlyText = ( text ) => {
-    return By.xpath( `//button[contains(text(), "${text}")]` )
+    return By.xpath( `//button[contains(text(), '${text}')]` )
 }
 
 const getLink = ( text ) => {
-    return By.xpath( `//a[contains(text(), "${text}")]` )
+    const escapedText = text.replace( /"/g, '' );
+    return By.xpath( `//a[contains(., '${escapedText}')]` )
 }
 
 module.exports = {

@@ -12,13 +12,13 @@ const main = async () => {
     const filename = `products-${getFormattedDate()}.json`
     const filePath = path.join( dataFolder, filename )
 
-    await scrapeCaprabo()
-
-    // // Mercadona
-    // // Scraping supermarket
+    // Scraping supermarket
+    const scraping = await scrapeCaprabo()
+    // Mercadona
     // const scraping = await scrapeMercadona()
-    // // Write json with info
-    // await writeJson( scraping, filePath )
+
+    // Write json with info
+    await writeJson( scraping, filePath )
 }
 
 main().catch( console.error )

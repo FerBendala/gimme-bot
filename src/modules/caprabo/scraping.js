@@ -8,13 +8,14 @@ const { getButton, getLink } = require( '../get-items' )
 // Specific
 const { getAllCategories, getAllSubCategories } = require( './get-categories' )
 const { getProductsJson } = require( './get-products-json' )
+const { navigateToUrl } = require( '../navigate-to-url' )
 
 
 const scrapeCaprabo = async () => {
     // Configure Selenium and specify URL
     const url = 'https://www.capraboacasa.com/portal/es'
     const driver = await configureDriver()
-    await driver.get( url )
+    await navigateToUrl( driver, url )
 
     // Go to categories and remove cookies banner
     await elementClick( 'Cookies button', driver, getButton( 'ACEPTAR COOKIES' ) )
@@ -27,11 +28,16 @@ const scrapeCaprabo = async () => {
         // View category on console
         console.log( `\x1b[32m ${category} \x1b[0m` )
 
-        // Get subcategories
-        await elementClick( category, driver, getLink( category ) )
+        // Get subcategory URL
+        const subcategoryLink = getLink( category );
+        const subcategoryElement = await driver.findElement( subcategoryLink );
+        const subcategoryUrl = await subcategoryElement.getAttribute( 'href' );
+        await navigateToUrl( driver, subcategoryUrl )
+
+        // // Get subcategories
+        // await elementClick( category, driver, getLink( category ) )
 
         const document = await getPageHtml( driver )
-
         getProductsJson( document )
     }
 
