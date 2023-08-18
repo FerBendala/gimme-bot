@@ -6,19 +6,20 @@ const { scrapeMercadona } = require( './modules/mercadona/scraping' )
 const { scrapeCaprabo } = require( './modules/caprabo/scraping' )
 
 const main = async () => {
-    const dataFolder = await createFolder()
-
-    // Naming file and pathing
-    const filename = `products-${getFormattedDate()}.json`
-    const filePath = path.join( dataFolder, filename )
+    const capraboFolder = await createFolder( 'data/caprabo' )
+    const mercadonaFolder = await createFolder( 'data/mercadona' )
 
     // Scraping supermarket
-    const scraping = await scrapeCaprabo()
-    // Mercadona
-    // const scraping = await scrapeMercadona()
+    const scrapingCaprabo = await scrapeCaprabo()
+    const scrapingMercadona = await scrapeMercadona()
 
     // Write json with info
-    await writeJson( scraping, filePath )
+    await writeJson( scrapingCaprabo, path.join(
+        capraboFolder, `caprabo-${getFormattedDate()}.json`
+    ) )
+    await writeJson( scrapingMercadona, path.join(
+        mercadonaFolder, `mercadona-${getFormattedDate()}.json`
+    ) )
 }
 
 main().catch( console.error )

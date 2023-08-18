@@ -1,12 +1,12 @@
 // Generic
-const { By, Key, until } = require( 'selenium-webdriver' )
+const { By } = require( 'selenium-webdriver' )
 const { configureDriver } = require( '../../drivers/selenium' )
 const { getPageHtml } = require( '../get-html' )
-const { elementClick, clickCategoriesAndGetProducts } = require( '../get-clicks' )
+const { elementClick } = require( '../get-clicks' )
 const { getButton, getLink } = require( '../get-items' )
 
 // Specific
-const { getAllCategories, getAllSubCategories } = require( './get-categories' )
+const { getAllCategories } = require( './get-categories' )
 const { getProductsJson } = require( './get-products-json' )
 const { navigateToUrl } = require( '../navigate-to-url' )
 
@@ -20,6 +20,9 @@ const scrapeCaprabo = async () => {
     // Go to categories and remove cookies banner
     await elementClick( 'Cookies button', driver, getButton( 'ACEPTAR COOKIES' ) )
 
+    // Set empty products
+    let products = {}
+
     // Categories iteration
     await driver.sleep( 1000 )
     const allCategories = await getAllCategories( driver )
@@ -29,19 +32,39 @@ const scrapeCaprabo = async () => {
         console.log( `\x1b[32m ${category} \x1b[0m` )
 
         // Get subcategory URL
-        const subcategoryLink = getLink( category );
-        const subcategoryElement = await driver.findElement( subcategoryLink );
-        const subcategoryUrl = await subcategoryElement.getAttribute( 'href' );
+        const subcategoryLink = getLink( category )
+        const subcategoryElement = await driver.findElement( subcategoryLink )
+        const subcategoryUrl = await subcategoryElement.getAttribute( 'href' )
         await navigateToUrl( driver, subcategoryUrl )
 
-        // // Get subcategories
-        // await elementClick( category, driver, getLink( category ) )
+        let currentPage = 1;
 
-        const document = await getPageHtml( driver )
-        getProductsJson( document )
+        while ( true ) {
+            const document = await getPageHtml( driver )
+            const nextPageCategoryProducts = getProductsJson( document )
+
+            if ( !products[category] ) {
+                products[category] = [];
+            }
+
+            products[category] = products[category].concat( nextPageCategoryProducts )
+
+            try {
+                // Go to the next page
+                const nextPageLink = By.css( `ul.pagination li a[data-page="${currentPage + 1}"]` )
+                const nextPageElement = await driver.findElement( nextPageLink )
+                await nextPageElement.click()
+
+                currentPage++
+                await driver.sleep( 1000 )
+            } catch ( error ) {
+                // No next page, exit the loop
+                break
+            }
+        }
     }
 
-    // return products
+    return products
 }
 
 module.exports = { scrapeCaprabo }

@@ -10,6 +10,6 @@
     "license": "ISC",
     "dependencies": {
         "jsdom": "^22.1.0",
-        "selenium-webdriver": "^4.10.0"
+        "selenium-webdriver": "^4.11.1"
     }
 }

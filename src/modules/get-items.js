@@ -9,8 +9,7 @@ const getButtonWithOnlyText = ( text ) => {
 }
 
 const getLink = ( text ) => {
-    const escapedText = text.replace( /"/g, '' );
-    return By.xpath( `//a[contains(., '${escapedText}')]` )
+    return By.xpath( `//a[contains(text(), '${text}')]` )
 }
 
 module.exports = {

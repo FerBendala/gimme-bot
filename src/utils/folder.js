@@ -1,8 +1,8 @@
 const fs = require( 'fs' )
 const path = require( 'path' )
 
-const createFolder = () => {
-    const dataFolder = path.join( __dirname, '../data' )
+const createFolder = ( name ) => {
+    const dataFolder = path.join( __dirname, `../${name}` )
 
     // Create data folder if not exists
     if ( !fs.existsSync( dataFolder ) ) {

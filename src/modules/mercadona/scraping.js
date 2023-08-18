@@ -1,9 +1,12 @@
+// Generic
 const { By, Key, until } = require( 'selenium-webdriver' )
 const { configureDriver } = require( '../../drivers/selenium' )
-
 const { getButton } = require( '../get-items' )
-const { getAllCategories, getAllSubCategories } = require( './get-categories' )
 const { elementClick, clickCategoriesAndGetProducts } = require( '../get-clicks' )
+
+// Specific
+const { getAllCategories, getAllSubCategories } = require( './get-categories' )
+const { navigateToUrl } = require( '../navigate-to-url' )
 
 const scrapeMercadona = async () => {
     // Configure Selenium and specify URL
