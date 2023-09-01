@@ -21,7 +21,7 @@ const scrapeCaprabo = async () => {
     await elementClick( 'Cookies button', driver, getButton( 'ACEPTAR COOKIES' ) )
 
     // Set empty products
-    let products = {}
+    let products = []
 
     // Categories iteration
     await driver.sleep( 1000 )
@@ -37,17 +37,18 @@ const scrapeCaprabo = async () => {
         const subcategoryUrl = await subcategoryElement.getAttribute( 'href' )
         await navigateToUrl( driver, subcategoryUrl )
 
-        let currentPage = 1;
+        let currentPage = 1
+        let whileLap = true
 
-        while ( true ) {
+        while ( whileLap ) {
             const document = await getPageHtml( driver )
             const nextPageCategoryProducts = getProductsJson( document )
 
             if ( !products[category] ) {
-                products[category] = [];
+                products[category] = []
             }
 
-            products[category] = products[category].concat( nextPageCategoryProducts )
+            products = products.concat(nextPageCategoryProducts)
 
             try {
                 // Go to the next page
@@ -59,6 +60,7 @@ const scrapeCaprabo = async () => {
                 await driver.sleep( 1000 )
             } catch ( error ) {
                 // No next page, exit the loop
+                whileLap = false
                 break
             }
         }

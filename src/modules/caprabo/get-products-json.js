@@ -11,10 +11,10 @@ const global = {
 
 const getProductsJson = ( document ) => {
     const sections = Array.from( document.querySelectorAll( global.section ) )
-    const products = sections.map( section => {
+    const products = sections.flatMap( section => {
         const productCards = Array.from( section.querySelectorAll( global.card.card ) )
         const sectionProducts = productCards.map( card => {
-            const name = card.querySelector( global.card.name )?.textContent || ''
+            const name = card.querySelector( global.card.name )?.getAttribute( 'data-description' ) || card.querySelector( global.card.name )?.textContent || ''
             const price = card.querySelector( global.card.price )?.textContent.split( '/' )[0] || ''
             const image = card.querySelector( global.card.image )?.src || ''
 
@@ -26,7 +26,7 @@ const getProductsJson = ( document ) => {
         return sectionProducts
     } )
 
-    return products[0]
+    return products
 }
 
 module.exports = { getProductsJson }

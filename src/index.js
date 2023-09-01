@@ -15,10 +15,10 @@ const main = async () => {
 
     // Write json with info
     await writeJson( scrapingCaprabo, path.join(
-        capraboFolder, `caprabo-${getFormattedDate()}.json`
+        capraboFolder, `caprabo.${getFormattedDate()}.json`
     ) )
     await writeJson( scrapingMercadona, path.join(
-        mercadonaFolder, `mercadona-${getFormattedDate()}.json`
+        mercadonaFolder, `mercadona.${getFormattedDate()}.json`
     ) )
 }
 
